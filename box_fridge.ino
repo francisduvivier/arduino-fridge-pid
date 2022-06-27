@@ -1,6 +1,4 @@
-#include <SPI.h> //i2c and the ssd1306Scherm libraries
 #include <Wire.h>
-#include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
 
