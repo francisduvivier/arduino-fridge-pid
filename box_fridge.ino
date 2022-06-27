@@ -45,7 +45,6 @@ void loop() {
     //Filter out bad potentiometer readings
     while (potVal != secondPotRead) {
       potVal = secondPotRead;
-      delay(10);
       secondPotRead = analogRead(POTPIN);
     }
     wantedTemp = potVal / 30 - 5;
