@@ -1,5 +1,6 @@
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
+#include <DHT.h>
 
 
 //DISPLAY SSD1036
@@ -11,12 +12,11 @@ Adafruit_SSD1306 ssd1306Scherm(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 //TEMP DHT22
 int wantedTemp = 10;
-#include "DHT.h"
 #define DHTPIN 11
 #define DHTTYPE DHT22
 
 //POTENTIO METER
-#define POTPIN A2
+#define POTPIN A0
 
 //RELAY
 #define RELPIN 2
@@ -33,9 +33,17 @@ void setup() {
 }
 
 void loop() {
+  int nbSame =0;
+  int nbSameNeeded =3;
   float temp = dht.readTemperature(false);
-  delay(500);
   int potVal = analogRead(POTPIN);
+  int secondPotRead = -1;
+  //Filter out bad potentiometer readings
+  while(potVal != secondPotRead){
+    potVal = secondPotRead;
+    delay(50);
+    secondPotRead = analogRead(POTPIN);
+  }
   wantedTemp = potVal / 30 -5;
   int offTemp = wantedTemp - 1;
   int onTemp = wantedTemp + 1;
@@ -45,6 +53,7 @@ void loop() {
   } else if (temp > onTemp) {
     state = true;
   }
+  digitalWrite(RELPIN, state);
 
   ssd1306Scherm.setCursor(0, 0);
   ssd1306Scherm.setRotation(0);
@@ -77,4 +86,5 @@ void loop() {
   ssd1306Scherm.setCursor(27, 23);
   ssd1306Scherm.print("ko-lab.space");
   ssd1306Scherm.display();
+  delay(500);
 }
