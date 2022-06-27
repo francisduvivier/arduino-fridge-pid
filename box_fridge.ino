@@ -17,6 +17,8 @@ int wantedTemp = 10;
 
 //POTENTIO METER
 #define POTPIN A0
+//This allows to disable the potentiometer by NOT connecting d3 to ground.
+#define POTSWITCH 3
 
 //RELAY
 #define RELPIN 2
@@ -29,22 +31,25 @@ void setup() {
   ssd1306Scherm.display();
   pinMode(RELPIN, OUTPUT);
   pinMode(POTPIN, INPUT);
+  pinMode(POTSWITCH, INPUT_PULLUP);
+
   dht.begin();
 }
-
 void loop() {
-  int nbSame =0;
-  int nbSameNeeded =3;
+  int nbSame = 0;
+  int nbSameNeeded = 3;
   float temp = dht.readTemperature(false);
-  int potVal = analogRead(POTPIN);
-  int secondPotRead = -1;
-  //Filter out bad potentiometer readings
-  while(potVal != secondPotRead){
-    potVal = secondPotRead;
-    delay(50);
-    secondPotRead = analogRead(POTPIN);
+  if (!digitalRead(POTSWITCH)) {
+    int potVal = analogRead(POTPIN);
+    int secondPotRead = -1;
+    //Filter out bad potentiometer readings
+    while (potVal != secondPotRead) {
+      potVal = secondPotRead;
+      delay(10);
+      secondPotRead = analogRead(POTPIN);
+    }
+    wantedTemp = potVal / 30 - 5;
   }
-  wantedTemp = potVal / 30 -5;
   int offTemp = wantedTemp - 1;
   int onTemp = wantedTemp + 1;
   bool state = false;
@@ -80,11 +85,11 @@ void loop() {
   String tempString = String(temp, 1);
   ssd1306Scherm.print(tempString);
   ssd1306Scherm.print("C::");
-  ssd1306Scherm.print(state? "ON": "OFF");
+  ssd1306Scherm.print(state ? "ON" : "OFF");
 
   ssd1306Scherm.setTextSize(1);
   ssd1306Scherm.setCursor(27, 23);
   ssd1306Scherm.print("ko-lab.space");
   ssd1306Scherm.display();
-  delay(500);
+  delay(100);
 }
