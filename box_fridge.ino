@@ -25,7 +25,7 @@ float MINTEMP = -5;
 #define RANGESWITCH 4
 
 //RELAY
-#define RELPIN 2
+#define RELPIN 9
 
 DHT dht(DHTPIN, DHTTYPE);
 
