@@ -15,7 +15,7 @@ float wantedTemp = 10;
 float wantedTempRange = 4;
 float MAXTEMP = 30;
 float MINTEMP = -5;
-#define DHTPIN 11
+#define DHTPIN 13
 #define DHTTYPE DHT22
 
 //POTENTIO METER
