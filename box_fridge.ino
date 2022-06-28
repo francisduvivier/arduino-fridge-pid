@@ -21,11 +21,11 @@ float MINTEMP = -5;
 //POTENTIO METER
 #define POTPIN A0
 //This allows to disable the potentiometer by NOT connecting d3 to ground.
-#define POT_TEMP_SWITCH 3
-#define POT_RANGE_SWITCH 4
+#define POTSWITCH 3
+#define RANGESWITCH 4
 
 //RELAY
-#define RELPIN 2
+#define RELPIN 9
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -35,8 +35,8 @@ void setup() {
   ssd1306Scherm.display();
   pinMode(RELPIN, OUTPUT);
   pinMode(POTPIN, INPUT);
-  pinMode(POT_TEMP_SWITCH, INPUT_PULLUP);
-  pinMode(POT_RANGE_SWITCH, INPUT_PULLUP);
+  pinMode(POTSWITCH, INPUT_PULLUP);
+  pinMode(RANGESWITCH, INPUT_PULLUP);
   dht.begin();
 }
 bool state = false;
@@ -45,7 +45,7 @@ void loop() {
   int nbSame = 0;
   int nbSameNeeded = 3;
   float temp = dht.readTemperature(false);
-  if (!digitalRead(POT_TEMP_SWITCH) || !digitalRead(POT_RANGE_SWITCH)) {
+  if (!digitalRead(POTSWITCH) || !digitalRead(RANGESWITCH)) {
     int potVal = analogRead(POTPIN);
     int secondPotRead = -1;
     //Filter out bad potentiometer readings
@@ -53,7 +53,7 @@ void loop() {
       potVal = secondPotRead;
       secondPotRead = analogRead(POTPIN);
     }
-    if (!digitalRead(POT_RANGE_SWITCH)) {
+    if (!digitalRead(RANGESWITCH)) {
       wantedTempRange = potVal /(1024/10.0);
     } else {
       wantedTemp = potVal / (1024/(MAXTEMP-MINTEMP)) + MINTEMP;
